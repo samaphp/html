@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dummy Web Placeholder Page Service</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
   <style>
     body {
       margin: 0;
@@ -46,9 +46,41 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    .course-info h2 {
+    /* === Flex layout for content + image === */
+    .course-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      flex-wrap: nowrap;
+    }
+
+    .course-text {
+      flex: 1 1 60%;
+      min-width: 250px;
+    }
+
+    .course-text h2 {
       margin-top: 0;
       color: #1a73e8;
+    }
+
+    .course-info img {
+      flex: 0 0 40%;
+      max-width: 40%;
+      height: auto;
+      border-radius: 6px;
+      display: none; /* hidden by default */
+      object-fit: cover;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 700px) {
+      .course-info {
+        flex-direction: column;
+      }
+      .course-info img {
+        max-width: 100%;
+      }
     }
 
     .usage {
@@ -97,8 +129,8 @@
             '✔ Test integrations or demos where a simple page is required.'
           ],
           exampleHeading: 'Step-by-step Example:',
-          exampleUrl: '?title=Hello%20world!&text=This%20is%20a%20sample%20paragraph.',
-          exampleLink: 'Click here to load the Hello world! example.',
+          exampleUrl: '?title=Hello%20world!&text=This%20is%20a%20sample%20paragraph.&img=https://picsum.photos/seed/101001001/400/250',
+          exampleLink: 'Click here to load the Hello world! example with image.',
           note: 'Note: The text is limited to 500 characters.',
           back: 'Back',
           footer: '⚠️ This page is for testing purposes. Temporary page. Content is rendered directly from URL parameters.'
@@ -113,8 +145,8 @@
             '✔ اختبار التكاملات أو العروض التجريبية التي تتطلب صفحة بسيطة.'
           ],
           exampleHeading: 'مثال عملي خطوة بخطوة:',
-          exampleUrl: '?lang=ar&title=مرحباً%20بالعالم!&text=هذا%20نص%20تجريبي%20للتوضيح.',
-          exampleLink: 'اضغط هنا لفتح مثال مرحباً بالعالم!',
+          exampleUrl: '?lang=ar&title=مرحباً%20بالعالم!&text=هذا%20نص%20تجريبي%20للتوضيح.&img=https://picsum.photos/seed/101001001/400/250',
+          exampleLink: 'اضغط هنا لفتح مثال مرحباً بالعالم مع صورة!',
           note: 'ملاحظة: النص محدود بـ ٥٠٠ حرف فقط.',
           back: 'رجوع',
           footer: '⚠️ هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة. محتوى الصفحة يتم التحكم به مباشرة من الرابط.'
@@ -131,6 +163,7 @@
       // Values
       const rawTitle = params.get('title');
       let rawText = params.get('text');
+      const rawImg = params.get('img');
 
       // Enforce text length limit
       if (rawText && rawText.length > 500) {
@@ -158,9 +191,15 @@
       } else {
         // Normal mode
         document.querySelector('header h1').textContent = t.serviceName;
-
         document.getElementById('main-title').textContent = rawTitle;
         document.getElementById('page-text').textContent = rawText || t.defaultText || '';
+
+        // Image handling
+        if (rawImg) {
+          const imgEl = document.getElementById('page-image');
+          imgEl.src = rawImg;
+          imgEl.style.display = 'block';
+        }
       }
 
       // Document title, back, footer
@@ -184,8 +223,11 @@
 
   <div class="container">
     <div class="course-info">
-      <h2 id="main-title">Default Title</h2>
-      <p id="page-text">This is a sample text shown when the text parameter is not provided.</p>
+      <div class="course-text">
+        <h2 id="main-title">Default Title</h2>
+        <p id="page-text">This is a sample text shown when the text parameter is not provided.</p>
+      </div>
+      <img id="page-image" alt="Page Image">
     </div>
   </div>
 
