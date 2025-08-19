@@ -191,6 +191,7 @@
       } else {
         // Normal mode
         document.querySelector('header h1').textContent = t.serviceName;
+        document.querySelector('header h1').style.display = 'none';
         document.getElementById('main-title').textContent = rawTitle;
         document.getElementById('page-text').textContent = rawText || t.defaultText || '';
 
