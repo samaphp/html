@@ -50,6 +50,26 @@
       color: #1a73e8;
     }
 
+    .usage {
+      background: #f0f4ff;
+      border: 1px solid #cbd6f0;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .usage h3 {
+      margin-top: 0;
+      color: #1a73e8;
+    }
+
+    .usage code {
+      background: #eef2f7;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+    }
+
     .footer {
       background: #f0f0f0;
       text-align: center;
@@ -67,16 +87,32 @@
       // Translations
       const translations = {
         en: {
-          pageTitle: 'Dummy Web Placeholder Page Service',
-          defaultTitle: 'Default Title',
-          defaultText: 'This is a sample text shown when the text parameter is not provided.',
+          serviceName: 'Dummy Web Placeholder Page Service',
+          tutorialTitle: 'How to Use This Service',
+          purpose: 'Purpose: This service provides a simple placeholder web page that can be customized using URL parameters.',
+          useCases: [
+            '✔ Use as a temporary landing page for auto-generated links.',
+            '✔ Display quick information without building a full webpage.',
+            '✔ Test integrations or demos where a simple page is required.'
+          ],
+          exampleHeading: 'Step-by-step Example:',
+          exampleUrl: '?title=Hello%20world!&text=This%20is%20a%20sample%20paragraph.',
+          exampleLink: 'Click here to load the Hello world! example.',
           back: 'Back',
           footer: '© This page is for testing purposes. Temporary page.'
         },
         ar: {
-          pageTitle: 'خدمة الصفحة التجريبية',
-          defaultTitle: 'العنوان الافتراضي',
-          defaultText: 'هذا نص افتراضي تجريبي يُعرض في حالة عدم وجود معامل text في الرابط.',
+          serviceName: 'خدمة الصفحة التجريبية',
+          tutorialTitle: 'كيفية استخدام هذه الخدمة',
+          purpose: 'الغرض: هذه الخدمة توفر صفحة ويب بسيطة يمكن تخصيصها باستخدام معاملات الرابط (URL).',
+          useCases: [
+            '✔ استخدامها كصفحة هبوط مؤقتة للروابط المولدة تلقائياً.',
+            '✔ عرض معلومات سريعة بدون الحاجة لبناء صفحة كاملة.',
+            '✔ اختبار التكاملات أو العروض التجريبية التي تتطلب صفحة بسيطة.'
+          ],
+          exampleHeading: 'مثال عملي خطوة بخطوة:',
+          exampleUrl: '?lang=ar&title=مرحباً%20بالعالم!&text=هذا%20نص%20تجريبي%20للتوضيح.',
+          exampleLink: 'اضغط هنا لفتح مثال مرحباً بالعالم!',
           back: 'رجوع',
           footer: '© هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة.'
         }
@@ -89,19 +125,41 @@
       document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
       document.body.style.textAlign = (lang === 'ar') ? 'right' : 'left';
 
-      // Title
-      const title = params.get('title') || t.defaultTitle;
-      document.title = t.pageTitle;
-      document.getElementById('main-title').textContent = title;
+      // Values
+      const rawTitle = params.get('title');
+      const rawText = params.get('text');
 
-      // Text
-      const text = params.get('text') || t.defaultText;
-      document.getElementById('page-text').textContent = text;
+      if (!rawTitle) {
+        // Tutorial mode
+        document.querySelector('.back-link').style.display = 'none';
+        document.querySelector('header h1').textContent = t.serviceName;
 
-      // Back
+        document.getElementById('main-title').textContent = t.tutorialTitle;
+        document.getElementById('page-text').innerHTML = `
+          <div class="usage">
+            <p>${t.purpose}</p>
+            <ul>
+              ${t.useCases.map(c => `<li>${c}</li>`).join('')}
+            </ul>
+            <h3>${t.exampleHeading}</h3>
+            <p><code>${t.exampleUrl}</code></p>
+            <p><a href="${t.exampleUrl}">${t.exampleLink}</a></p>
+          </div>
+        `;
+      } else {
+        // Normal mode
+        document.querySelector('header h1').textContent = t.serviceName;
+
+        const title = rawTitle;
+        document.getElementById('main-title').textContent = title;
+
+        const text = rawText || t.defaultText || '';
+        document.getElementById('page-text').textContent = text;
+      }
+
+      // Document title, back, footer
+      document.title = t.serviceName;
       document.getElementById('back-link').textContent = t.back;
-
-      // Footer
       document.getElementById('footer-text').textContent = t.footer;
     };
 
