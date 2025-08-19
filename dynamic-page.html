@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dummy Web Placeholder Page Service</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
   <style>
     body {
       margin: 0;
@@ -98,8 +99,9 @@
           exampleHeading: 'Step-by-step Example:',
           exampleUrl: '?title=Hello%20world!&text=This%20is%20a%20sample%20paragraph.',
           exampleLink: 'Click here to load the Hello world! example.',
+          note: 'Note: The text is limited to 500 characters.',
           back: 'Back',
-          footer: '© This page is for testing purposes. Temporary page.'
+          footer: '⚠️ This page is for testing purposes. Temporary page. Content is rendered directly from URL parameters.'
         },
         ar: {
           serviceName: 'خدمة الصفحة التجريبية',
@@ -113,8 +115,9 @@
           exampleHeading: 'مثال عملي خطوة بخطوة:',
           exampleUrl: '?lang=ar&title=مرحباً%20بالعالم!&text=هذا%20نص%20تجريبي%20للتوضيح.',
           exampleLink: 'اضغط هنا لفتح مثال مرحباً بالعالم!',
+          note: 'ملاحظة: النص محدود بـ ٥٠٠ حرف فقط.',
           back: 'رجوع',
-          footer: '© هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة.'
+          footer: '⚠️ هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة. محتوى الصفحة يتم التحكم به مباشرة من الرابط.'
         }
       };
 
@@ -127,7 +130,12 @@
 
       // Values
       const rawTitle = params.get('title');
-      const rawText = params.get('text');
+      let rawText = params.get('text');
+
+      // Enforce text length limit
+      if (rawText && rawText.length > 500) {
+        rawText = rawText.substring(0, 500) + '...';
+      }
 
       if (!rawTitle) {
         // Tutorial mode
@@ -144,17 +152,15 @@
             <h3>${t.exampleHeading}</h3>
             <p><code>${t.exampleUrl}</code></p>
             <p><a href="${t.exampleUrl}">${t.exampleLink}</a></p>
+            <p><em>${t.note}</em></p>
           </div>
         `;
       } else {
         // Normal mode
         document.querySelector('header h1').textContent = t.serviceName;
 
-        const title = rawTitle;
-        document.getElementById('main-title').textContent = title;
-
-        const text = rawText || t.defaultText || '';
-        document.getElementById('page-text').textContent = text;
+        document.getElementById('main-title').textContent = rawTitle;
+        document.getElementById('page-text').textContent = rawText || t.defaultText || '';
       }
 
       // Document title, back, footer
