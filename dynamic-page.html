@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>خدمة العنوان التجريبية</title>
+  <title>Dummy Web Placeholder Page Service</title>
   <style>
     body {
       margin: 0;
       font-family: "Tahoma", "Arial", sans-serif;
       background-color: #f7f9fb;
       color: #333;
-      direction: rtl;
-      text-align: right;
+      text-align: left;
     }
 
     header {
@@ -63,15 +62,47 @@
   <script>
     window.onload = function() {
       const params = new URLSearchParams(window.location.search);
-      
-      // العنوان
-      const title = params.get('title') || 'العنوان الافتراضي';
-      document.title = title;
+      const lang = params.get('lang') || 'en';
+
+      // Translations
+      const translations = {
+        en: {
+          pageTitle: 'Dummy Web Placeholder Page Service',
+          defaultTitle: 'Default Title',
+          defaultText: 'This is a sample text shown when the text parameter is not provided.',
+          back: 'Back',
+          footer: '© This page is for testing purposes. Temporary page.'
+        },
+        ar: {
+          pageTitle: 'خدمة الصفحة التجريبية',
+          defaultTitle: 'العنوان الافتراضي',
+          defaultText: 'هذا نص افتراضي تجريبي يُعرض في حالة عدم وجود معامل text في الرابط.',
+          back: 'رجوع',
+          footer: '© هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة.'
+        }
+      };
+
+      const t = translations[lang] || translations.en;
+
+      // Set document direction
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      document.body.style.textAlign = (lang === 'ar') ? 'right' : 'left';
+
+      // Title
+      const title = params.get('title') || t.defaultTitle;
+      document.title = t.pageTitle;
       document.getElementById('main-title').textContent = title;
 
-      // النص
-      const text = params.get('text') || 'هذا نص افتراضي تجريبي يُعرض في حالة عدم وجود معامل text في الرابط.';
+      // Text
+      const text = params.get('text') || t.defaultText;
       document.getElementById('page-text').textContent = text;
+
+      // Back
+      document.getElementById('back-link').textContent = t.back;
+
+      // Footer
+      document.getElementById('footer-text').textContent = t.footer;
     };
 
     function goBack() {
@@ -83,19 +114,19 @@
   <header>
     <h1></h1>
     <div class="back-link">
-      <a href="javascript:void(0);" onclick="goBack()">رجوع</a>
+      <a id="back-link" href="javascript:void(0);" onclick="goBack()">Back</a>
     </div>
   </header>
 
   <div class="container">
     <div class="course-info">
-      <h2 id="main-title">العنوان الافتراضي</h2>
-      <p id="page-text">النص الافتراضي يظهر هنا.</p>
+      <h2 id="main-title">Default Title</h2>
+      <p id="page-text">This is a sample text shown when the text parameter is not provided.</p>
     </div>
   </div>
 
-  <div class="footer">
-    &copy; هذه الصفحة لأغراض التجربة. وهي صفحة مؤقتة.
+  <div class="footer" id="footer-text">
+    © This page is for testing purposes. Temporary page.
   </div>
 </body>
 </html>
